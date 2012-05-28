@@ -1,0 +1,8 @@
+{
+  "dependencies": [
+    "spine",
+    "spine/lib/route",
+    "spine/lib/manager"
+  ],
+  "libs": []
+}

@@ -1,0 +1,7 @@
+{
+  "name": "Spine + Bootstrap Example",
+  "version": "0.5.0",
+  "dependencies": { 
+    "spine": "git://github.com/stephenvisser/spine.git"
+  }
+}
