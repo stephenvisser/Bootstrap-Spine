@@ -1463,23 +1463,19 @@
       NavBar.__super__.constructor.apply(this, arguments);
       this.html(require('views/navbar'));
       this.routes({
-        '/': function() {
-          var button, _i, _len, _ref, _results;
-          _ref = this.buttons.children();
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            button = _ref[_i];
-            _results.push(this.highlight($(button), this["default"]));
-          }
-          return _results;
-        },
         '*path': function(path) {
-          var button, _i, _len, _ref, _results;
+          var button, location, properPath, _i, _len, _ref, _results;
+          location = path.match.input.indexOf('#');
+          if (location === -1) {
+            properPath = this["default"];
+          } else {
+            properPath = path.match.input.slice(location);
+          }
           _ref = this.buttons.children();
           _results = [];
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             button = _ref[_i];
-            _results.push(this.highlight($(button), path.match.input));
+            _results.push(this.highlight($(button), properPath));
           }
           return _results;
         }
@@ -1659,7 +1655,7 @@
   (function() {
     (function() {
     
-      __out.push('<div class="navbar navbar-fixed-top">\n  <div class="navbar-inner">\n    <div class="container">\n      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n      </a>\n\n      <a class="brand" href="#">Bootstrap + Spine</a>\n\n      <div class="nav-collapse collapse">\n        <ul class="nav">\n          <li class="active"><a href="#a">Option A</a></li>\n          <li class="dropdown">\n          <a href="#b" class="dropdown-toggle" data-toggle="dropdown">Nested Menu<b class="caret"></b></a>\n          <ul class="dropdown-menu">\n            <li><a href="#b/a">Sub Menu A</a></li>\n            <li><a href="#b/b">Sub Menu B</a></li>\n            <li><a href="#b/c">And something else</a></li>\n          </ul>\n          </li>\n          <li><a href="#c">Another Option</a></li>\n        </ul>\n      </div>\n    </div>\n  </div>\n</div>\n\n');
+      __out.push('<div class="navbar navbar-fixed-top">\n  <div class="navbar-inner">\n    <div class="container">\n      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n      </a>\n\n      <a class="brand" href="#">Bootstrap + Spine</a>\n\n      <div class="nav-collapse collapse">\n        <ul class="nav">\n          <li><a href="#a">Option A</a></li>\n          <li class="dropdown">\n          <a href="#b" class="dropdown-toggle" data-toggle="dropdown">Nested Menu<b class="caret"></b></a>\n          <ul class="dropdown-menu">\n            <li><a href="#b/a">Sub Menu A</a></li>\n            <li><a href="#b/b">Sub Menu B</a></li>\n            <li><a href="#b/c">And something else</a></li>\n          </ul>\n          </li>\n          <li><a href="#c">Another Option</a></li>\n        </ul>\n      </div>\n    </div>\n  </div>\n</div>\n\n');
     
     }).call(this);
     

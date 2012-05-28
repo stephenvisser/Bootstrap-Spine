@@ -16,9 +16,12 @@ class NavBar extends Spine.Controller
     super
     @html require('views/navbar')
     @routes
-      '/': ->
-        @highlight $(button), @default for button in @buttons.children()
       '*path': (path) ->
-        @highlight $(button), path.match.input for button in @buttons.children()
+        location = path.match.input.indexOf '#'
+        if location == -1
+          properPath = @default
+        else
+          properPath = path.match.input[location...]
+        @highlight $(button), properPath for button in @buttons.children()
 
 module.exports = NavBar
