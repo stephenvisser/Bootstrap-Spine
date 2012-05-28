@@ -1,4 +1,9 @@
 {
+  "css":"./css",
+  "public":".",
+  "paths":["./src"],
+  "cssPath":"/assets/css/application.css",
+  "jsPath":"/assets/js/application.js",
   "dependencies": [
     "spine",
     "spine/lib/route",

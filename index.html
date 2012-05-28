@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Bootstrap + Spine</title>
+  
+  <link rel="shortcut icon" href="assets/ico/favicon.ico">
+  <link rel="stylesheet" href="assets/css/bootstrap.css">
+  <link rel="stylesheet" href="assets/css/application.css" type="text/css" charset="utf-8">
+  <link rel="stylesheet" href="assets/css/bootstrap-responsive.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+  <script src="assets/js/application.js" type="text/javascript" charset="utf-8"></script>
+  <script src="assets/js/bootstrap-transition.js" type="text/javascript" charset="utf-8"></script>
+  <script src="assets/js/bootstrap-collapse.js" type="text/javascript" charset="utf-8"></script>
+  <script src="assets/js/bootstrap-dropdown.js" type="text/javascript" charset="utf-8"></script>
+
+  <script type="text/javascript" charset="utf-8">
+    var NavBar = require("controllers/app-navigation");
+    var Content = require("controllers/app-body");
+    $(function(){
+        var nav = new NavBar();
+        var content = new Content();
+        $("body").append(nav.el);
+        $("body").append(content.el);
+        Spine.Route.setup()
+    });
+  </script>
+</head>
+<body></body>
+</html>
