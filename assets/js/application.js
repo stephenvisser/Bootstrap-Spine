@@ -1,1 +1,1680 @@
-((function(){if(!this.require){var a={},b={},c=function(f,g){var h=d(g,f),i=d(h,"./index"),j,k;j=b[h]||b[i];if(j)return j;if(k=a[h]||a[h=i])return j={id:h,exports:{}},b[h]=j.exports,k(j.exports,function(a){return c(a,e(h))},j),b[h]=j.exports;throw"module "+f+" not found"},d=function(a,b){var c=[],d,e;/^\.\.?(\/|$)/.test(b)?d=[a,b].join("/").split("/"):d=b.split("/");for(var f=0,g=d.length;f<g;f++)e=d[f],e==".."?c.pop():e!="."&&e!=""&&c.push(e);return c.join("/")},e=function(a){return a.split("/").slice(0,-1).join("/")};this.require=function(a){return c(a,"")},this.require.define=function(b){for(var c in b)a[c]=b[c]},this.require.modules=a,this.require.cache=b}return this.require.define})).call(this)({"spine/index":function(a,b,c){c.exports=b("./lib/spine")},"spine/lib/spine":function(a,b,c){((function(){var a,b,d,e,f,g,h,i,j,k,l,m,n=[].slice,o=[].indexOf||function(a){for(var b=0,c=this.length;b<c;b++)if(b in this&&this[b]===a)return b;return-1},p={}.hasOwnProperty,q=function(a,b){function d(){this.constructor=a}for(var c in b)p.call(b,c)&&(a[c]=b[c]);return d.prototype=b.prototype,a.prototype=new d,a.__super__=b.prototype,a},r=function(a,b){return function(){return a.apply(b,arguments)}};d={bind:function(a,b){var c,d,e,f,g;d=a.split(" "),c=this.hasOwnProperty("_callbacks")&&this._callbacks||(this._callbacks={});for(f=0,g=d.length;f<g;f++)e=d[f],c[e]||(c[e]=[]),c[e].push(b);return this},one:function(a,b){return this.bind(a,function(){return this.unbind(a,arguments.callee),b.apply(this,arguments)})},trigger:function(){var a,b,c,d,e,f,g;a=1<=arguments.length?n.call(arguments,0):[],c=a.shift(),d=this.hasOwnProperty("_callbacks")&&((g=this._callbacks)!=null?g[c]:void 0);if(!d)return;for(e=0,f=d.length;e<f;e++){b=d[e];if(b.apply(this,a)===!1)break}return!0},unbind:function(a,b){var c,d,e,f,g,h;if(!a)return this._callbacks={},this;e=(h=this._callbacks)!=null?h[a]:void 0;if(!e)return this;if(!b)return delete this._callbacks[a],this;for(d=f=0,g=e.length;f<g;d=++f){c=e[d];if(c!==b)continue;e=e.slice(),e.splice(d,1),this._callbacks[a]=e;break}return this}},e={trace:!0,logPrefix:"(App)",log:function(){var a;a=1<=arguments.length?n.call(arguments,0):[];if(!this.trace)return;return this.logPrefix&&a.unshift(this.logPrefix),typeof console!="undefined"&&console!==null&&typeof console.log=="function"&&console.log.apply(console,a),this}},m=["included","extended"],g=function(){function a(){typeof this.init=="function"&&this.init.apply(this,arguments)}return a.include=function(a){var b,c,d;if(!a)throw"include(obj) requires obj";for(b in a)c=a[b],o.call(m,b)<0&&(this.prototype[b]=c);return(d=a.included)!=null&&d.apply(this),this},a.extend=function(a){var b,c,d;if(!a)throw"extend(obj) requires obj";for(b in a)c=a[b],o.call(m,b)<0&&(this[b]=c);return(d=a.extended)!=null&&d.apply(this),this},a.proxy=function(a){var b=this;return function(){return a.apply(b,arguments)}},a.prototype.proxy=function(a){var b=this;return function(){return a.apply(b,arguments)}},a}(),f=function(b){function c(a){c.__super__.constructor.apply(this,arguments),a&&this.load(a),this.cid||(this.cid=this.constructor.uid("c-"))}return q(c,b),c.extend(d),c.records={},c.crecords={},c.attributes=[],c.configure=function(){var a,b;return b=arguments[0],a=2<=arguments.length?n.call(arguments,1):[],this.className=b,this.records={},this.crecords={},a.length&&(this.attributes=a),this.attributes&&(this.attributes=l(this.attributes)),this.attributes||(this.attributes=[]),this.unbind(),this},c.toString=function(){return""+this.className+"("+this.attributes.join(", ")+")"},c.find=function(a){var b;b=this.records[a];if(!b&&(""+a).match(/c-\d+/))return this.findCID(a);if(!b)throw"Unknown record";return b.clone()},c.findCID=function(a){var b;b=this.crecords[a];if(!b)throw"Unknown record";return b.clone()},c.exists=function(a){try{return this.find(a)}catch(b){return!1}},c.refresh=function(a,b){var c,d,e,f;b==null&&(b={}),b.clear&&(this.records={},this.crecords={}),d=this.fromJSON(a),j(d)||(d=[d]);for(e=0,f=d.length;e<f;e++)c=d[e],c.id||(c.id=c.cid),this.records[c.id]=c,this.crecords[c.cid]=c;return this.resetIdCounter(),this.trigger("refresh",this.cloneArray(d)),this},c.select=function(a){var b,c,d;return d=function(){var d,e;d=this.records,e=[];for(b in d)c=d[b],a(c)&&e.push(c);return e}.call(this),this.cloneArray(d)},c.findByAttribute=function(a,b){var c,d,e;e=this.records;for(c in e){d=e[c];if(d[a]===b)return d.clone()}return null},c.findAllByAttribute=function(a,b){return this.select(function(c){return c[a]===b})},c.each=function(a){var b,c,d,e;d=this.records,e=[];for(b in d)c=d[b],e.push(a(c.clone()));return e},c.all=function(){return this.cloneArray(this.recordsValues())},c.first=function(){var a;return a=this.recordsValues()[0],a!=null?a.clone():void 0},c.last=function(){var a,b;return b=this.recordsValues(),a=b[b.length-1],a!=null?a.clone():void 0},c.count=function(){return this.recordsValues().length},c.deleteAll=function(){var a,b,c,d;c=this.records,d=[];for(a in c)b=c[a],d.push(delete this.records[a]);return d},c.destroyAll=function(){var a,b,c,d;c=this.records,d=[];for(a in c)b=c[a],d.push(this.records[a].destroy());return d},c.update=function(a,b,c){return this.find(a).updateAttributes(b,c)},c.create=function(a,b){var c;return c=new this(a),c.save(b)},c.destroy=function(a,b){return this.find(a).destroy(b)},c.change=function(a){return typeof a=="function"?this.bind("change",a):this.trigger("change",a)},c.fetch=function(a){return typeof a=="function"?this.bind("fetch",a):this.trigger("fetch",a)},c.toJSON=function(){return this.recordsValues()},c.fromJSON=function(a){var b,c,d,e;if(!a)return;typeof a=="string"&&(a=JSON.parse(a));if(j(a)){e=[];for(c=0,d=a.length;c<d;c++)b=a[c],e.push(new this(b));return e}return new this(a)},c.fromForm=function(){var a;return(a=new this).fromForm.apply(a,arguments)},c.recordsValues=function(){var a,b,c,d;b=[],d=this.records;for(a in d)c=d[a],b.push(c);return b},c.cloneArray=function(a){var b,c,d,e;e=[];for(c=0,d=a.length;c<d;c++)b=a[c],e.push(b.clone());return e},c.idCounter=0,c.resetIdCounter=function(){var a,b,c,d;return d=function(a){return a=(a!=null?typeof a.replace=="function"?a.replace(/^c-/,""):void 0:void 0)||a,parseInt(a,10)},a=function(){var a,b,e,f;e=this.all(),f=[];for(a=0,b=e.length;a<b;a++)c=e[a],f.push(d(c.cid));return f}.call(this).sort(function(a,b){return a>b}),b=a[a.length-1],this.idCounter=b+1||0},c.uid=function(a){return a==null&&(a=""),a+this.idCounter++},c.prototype.isNew=function(){return!this.exists()},c.prototype.isValid=function(){return!this.validate()},c.prototype.validate=function(){},c.prototype.load=function(a){var b,c;for(b in a)c=a[b],typeof this[b]=="function"?this[b](c):this[b]=c;return this},c.prototype.attributes=function(){var a,b,c,d,e;b={},e=this.constructor.attributes;for(c=0,d=e.length;c<d;c++)a=e[c],a in this&&(typeof this[a]=="function"?b[a]=this[a]():b[a]=this[a]);return this.id&&(b.id=this.id),b},c.prototype.eql=function(a){return!!(a&&a.constructor===this.constructor&&a.cid===this.cid||a.id&&a.id===this.id)},c.prototype.save=function(a){var b,c;a==null&&(a={});if(a.validate!==!1){b=this.validate();if(b)return this.trigger("error",b),!1}return this.trigger("beforeSave",a),c=this.isNew()?this.create(a):this.update(a),this.trigger("save",a),c},c.prototype.updateAttribute=function(a,b,c){return this[a]=b,this.save(c)},c.prototype.updateAttributes=function(a,b){return this.load(a),this.save(b)},c.prototype.changeID=function(a){var b;return b=this.constructor.records,b[a]=b[this.id],delete b[this.id],this.id=a,this.save()},c.prototype.destroy=function(a){return a==null&&(a={}),this.trigger("beforeDestroy",a),delete this.constructor.records[this.id],delete this.constructor.crecords[this.cid],this.destroyed=!0,this.trigger("destroy",a),this.trigger("change","destroy",a),this.unbind(),this},c.prototype.dup=function(a){var b;return b=new this.constructor(this.attributes()),a===!1?b.cid=this.cid:delete b.id,b},c.prototype.clone=function(){return i(this)},c.prototype.reload=function(){var a;return this.isNew()?this:(a=this.constructor.find(this.id),this.load(a.attributes()),a)},c.prototype.toJSON=function(){return this.attributes()},c.prototype.toString=function(){return"<"+this.constructor.className+" ("+JSON.stringify(this)+")>"},c.prototype.fromForm=function(b){var c,d,e,f,g;d={},g=a(b).serializeArray();for(e=0,f=g.length;e<f;e++)c=g[e],d[c.name]=c.value;return this.load(d)},c.prototype.exists=function(){return this.id&&this.id in this.constructor.records},c.prototype.update=function(a){var b,c;return this.trigger("beforeUpdate",a),c=this.constructor.records,c[this.id].load(this.attributes()),b=c[this.id].clone(),b.trigger("update",a),b.trigger("change","update",a),b},c.prototype.create=function(a){var b,c;return this.trigger("beforeCreate",a),this.id||(this.id=this.cid),c=this.dup(!1),this.constructor.records[this.id]=c,this.constructor.crecords[this.cid]=c,b=c.clone(),b.trigger("create",a),b.trigger("change","create",a),b},c.prototype.bind=function(a,b){var c,d,e=this;return this.constructor.bind(a,c=function(a){if(a&&e.eql(a))return b.apply(e,arguments)}),this.constructor.bind("unbind",d=function(b){if(b&&e.eql(b))return e.constructor.unbind(a,c),e.constructor.unbind("unbind",d)}),c},c.prototype.one=function(a,b){var c,d=this;return c=this.bind(a,function(){return d.constructor.unbind(a,c),b.apply(d,arguments)})},c.prototype.trigger=function(){var a,b;return a=1<=arguments.length?n.call(arguments,0):[],a.splice(1,0,this),(b=this.constructor).trigger.apply(b,a)},c.prototype.unbind=function(){return this.trigger("unbind")},c}(g),b=function(b){function c(b){this.release=r(this.release,this);var d,e,f;this.options=b,f=this.options;for(d in f)e=f[d],this[d]=e;this.el||(this.el=document.createElement(this.tag)),this.el=a(this.el),this.className&&this.el.addClass(this.className),this.attributes&&this.el.attr(this.attributes),this.events||(this.events=this.constructor.events),this.elements||(this.elements=this.constructor.elements),this.events&&this.delegateEvents(this.events),this.elements&&this.refreshElements(),c.__super__.constructor.apply(this,arguments)}return q(c,b),c.include(d),c.include(e),c.prototype.eventSplitter=/^(\S+)\s*(.*)$/,c.prototype.tag="div",c.prototype.release=function(){return this.trigger("release"),this.el.remove(),this.unbind()},c.prototype.$=function(b){return a(b,this.el)},c.prototype.delegateEvents=function(a){var b,c,d,e,f,g,h=this;g=[];for(c in a)e=a[c],typeof e=="function"?e=function(a){return function(){return a.apply(h,arguments),!0}}(e):e=function(a){return function(){return h[a].apply(h,arguments),!0}}(e),d=c.match(this.eventSplitter),b=d[1],f=d[2],f===""?g.push(this.el.bind(b,e)):g.push(this.el.delegate(f,b,e));return g},c.prototype.refreshElements=function(){var a,b,c,d;c=this.elements,d=[];for(a in c)b=c[a],d.push(this[b]=this.$(a));return d},c.prototype.delay=function(a,b){return setTimeout(this.proxy(a),b||0)},c.prototype.html=function(a){return this.el.html(a.el||a),this.refreshElements(),this.el},c.prototype.append=function(){var a,b,c;return b=1<=arguments.length?n.call(arguments,0):[],b=function(){var c,d,e;e=[];for(c=0,d=b.length;c<d;c++)a=b[c],e.push(a.el||a);return e}(),(c=this.el).append.apply(c,b),this.refreshElements(),this.el},c.prototype.appendTo=function(a){return this.el.appendTo(a.el||a),this.refreshElements(),this.el},c.prototype.prepend=function(){var a,b,c;return b=1<=arguments.length?n.call(arguments,0):[],b=function(){var c,d,e;e=[];for(c=0,d=b.length;c<d;c++)a=b[c],e.push(a.el||a);return e}(),(c=this.el).prepend.apply(c,b),this.refreshElements(),this.el},c.prototype.replace=function(b){var c,d;return d=[this.el,a(b.el||b)],c=d[0],this.el=d[1],c.replaceWith(this.el),this.delegateEvents(this.events),this.refreshElements(),this.el},c}(g),a=(typeof window!="undefined"&&window!==null?window.jQuery:void 0)||(typeof window!="undefined"&&window!==null?window.Zepto:void 0)||function(a){return a},i=Object.create||function(a){var b;return b=function(){},b.prototype=a,new b},j=function(a){return Object.prototype.toString.call(a)==="[object Array]"},k=function(a){var b;if(!a)return!0;for(b in a)return!1;return!0},l=function(a){return Array.prototype.slice.call(a,0)},h=this.Spine={},typeof c!="undefined"&&c!==null&&(c.exports=h),h.version="1.0.6",h.isArray=j,h.isBlank=k,h.$=a,h.Events=d,h.Log=e,h.Module=g,h.Controller=b,h.Model=f,g.extend.call(h,d),g.create=g.sub=b.create=b.sub=f.sub=function(a,b){var c;return c=function(a){function b(){return b.__super__.constructor.apply(this,arguments)}return q(b,a),b}(this),a&&c.include(a),b&&c.extend(b),typeof c.unbind=="function"&&c.unbind(),c},f.setup=function(a,b){var c;return b==null&&(b=[]),c=function(a){function b(){return b.__super__.constructor.apply(this,arguments)}return q(b,a),b}(this),c.configure.apply(c,[a].concat(n.call(b))),c},g.init=b.init=f.init=function(a,b,c,d,e){return new this(a,b,c,d,e)},h.Class=g})).call(this)},"spine/lib/route":function(a,b,c){((function(){var a,d,e,f,g,h,i={}.hasOwnProperty,j=function(a,b){function d(){this.constructor=a}for(var c in b)i.call(b,c)&&(a[c]=b[c]);return d.prototype=b.prototype,a.prototype=new d,a.__super__=b.prototype,a},k=[].slice;d=this.Spine||b("spine"),a=d.$,f=/^#*/,g=/:([\w\d]+)/g,h=/\*([\w\d]+)/g,e=/[-[\]{}()+?.,\\^$|#\s]/g,d.Route=function(b){function i(a,b){var c;this.path=a,this.callback=b,this.names=[];if(typeof a=="string"){g.lastIndex=0;while((c=g.exec(a))!==null)this.names.push(c[1]);a=a.replace(e,"\\$&").replace(g,"([^/]*)").replace(h,"(.*?)"),this.route=new RegExp("^"+a+"$")}else this.route=a}var c;return j(i,b),i.extend(d.Events),i.historySupport=((c=window.history)!=null?c.pushState:void 0)!=null,i.routes=[],i.options={trigger:!0,history:!1,shim:!1},i.add=function(a,b){var c,d,e;if(typeof a!="object"||a instanceof RegExp)return this.routes.push(new this(a,b));e=[];for(c in a)d=a[c],e.push(this.add(c,d));return e},i.addMap=function(a){var b,c,d;c=[];for(b in a)d=a[b],c.push(new this(b,d));return this.routes.push(c)},i.setup=function(b){b==null&&(b={}),this.options=a.extend({},this.options,b),this.options.history&&(this.history=this.historySupport&&this.options.history);if(this.options.shim)return;return this.history?a(window).bind("popstate",this.change):a(window).bind("hashchange",this.change),this.change()},i.unbind=function(){return this.history?a(window).unbind("popstate",this.change):a(window).unbind("hashchange",this.change)},i.navigate=function(){var b,c,d,e;b=1<=arguments.length?k.call(arguments,0):[],d={},c=b[b.length-1],typeof c=="object"?d=b.pop():typeof c=="boolean"&&(d.trigger=b.pop()),d=a.extend({},this.options,d),e=b.join("/");if(this.path===e)return;this.path=e,this.trigger("navigate",this.path),d.trigger&&this.matchRoute(this.path,d);if(d.shim)return;return this.history?history.pushState({},document.title,this.path):window.location.hash=this.path},i.getPath=function(){var a;return a=window.location.pathname,a.substr(0,1)!=="/"&&(a="/"+a),a},i.getHash=function(){return window.location.hash},i.getFragment=function(){return this.getHash().replace(f,"")},i.getHost=function(){return(document.location+"").replace(this.getPath()+this.getHash(),"")},i.change=function(){var a;a=this.getFragment()!==""?this.getFragment():this.getPath();if(a===this.path)return;return this.path=a,this.matchRoute(this.path)},i.matchRoute=function(a,b){var c,d,e,f,g,h,i,j,k,l,m,n;d=[],m=this.routes;for(g=0,j=m.length;g<j;g++){f=m[g];if(f instanceof Array)for(h=0,k=f.length;h<k;h++){c=f[h];if(c.match(a,b)){d.push(c);break}}else if(f.match(a,b))return this.trigger("change",f,a),f}n=[];for(i=0,l=d.length;i<l;i++)e=d[i],n.push(this.trigger("change",e,a));return n},i.prototype.match=function(a,b){var c,d,e,f,g,h;b==null&&(b={}),d=this.route.exec(a);if(!d)return!1;b.match=d,f=d.slice(1);if(this.names.length)for(c=g=0,h=f.length;g<h;c=++g)e=f[c],b[this.names[c]]=e;return this.callback.call(null,b)!==!1},i}(d.Module),d.Route.change=d.Route.proxy(d.Route.change),d.Controller.include({routes:function(a){var b,c,e;e={};for(c in a)b=a[c],e[c]=this.proxy(b);return d.Route.addMap(e)},navigate:function(){return d.Route.navigate.apply(d.Route,arguments)}}),typeof c!="undefined"&&c!==null&&(c.exports=d.Route)})).call(this)},"spine/lib/manager":function(a,b,c){((function(){var a,d,e={}.hasOwnProperty,f=function(a,b){function d(){this.constructor=a}for(var c in b)e.call(b,c)&&(a[c]=b[c]);return d.prototype=b.prototype,a.prototype=new d,a.__super__=b.prototype,a},g=[].slice;d=this.Spine||b("spine"),a=d.$,d.Manager=function(a){function b(){this.controllers=[],this.bind("change",this.change),this.add.apply(this,arguments)}return f(b,a),b.include(d.Events),b.prototype.add=function(){var a,b,c,d,e;b=1<=arguments.length?g.call(arguments,0):[],e=[];for(c=0,d=b.length;c<d;c++)a=b[c],e.push(this.addOne(a));return e},b.prototype.addOne=function(a){var b=this;return a.bind("active",function(){var c;return c=1<=arguments.length?g.call(arguments,0):[],b.trigger.apply(b,["change",a].concat(g.call(c)))}),a.bind("release",function(){return b.controllers.splice(b.controllers.indexOf(a),1)}),this.controllers.push(a)},b.prototype.deactivate=function(){return this.trigger.apply(this,["change",!1].concat(g.call(arguments)))},b.prototype.change=function(){var a,b,c,d,e,f,h;c=arguments[0],a=2<=arguments.length?g.call(arguments,1):[],f=this.controllers,h=[];for(d=0,e=f.length;d<e;d++)b=f[d],b===c?h.push(b.activate.apply(b,a)):h.push(b.deactivate.apply(b,a));return h},b}(d.Module),d.Controller.include({active:function(){var a;return a=1<=arguments.length?g.call(arguments,0):[],typeof a[0]=="function"?this.bind("active",a[0]):(a.unshift("active"),this.trigger.apply(this,a)),this},isActive:function(){return this.el.hasClass("active")},activate:function(){return this.el.addClass("active"),this},deactivate:function(){return this.el.removeClass("active"),this}}),d.Stack=function(a){function b(){var a,c,e,f,g,h,i=this;b.__super__.constructor.apply(this,arguments),this.manager=new d.Manager,g=this.controllers;for(a in g)e=g[a],this[a]=new e({stack:this}),this.add(this[a]);c={},h=this.map,f=function(a,b){var d;return typeof b=="function"&&(d=b),d||(d=function(){var a;return(a=i[b]).active.apply(a,arguments)}),c[a]=d};for(a in h)e=h[a],f(a,e);this.routes(c),this["default"]&&this[this["default"]].active()}return f(b,a),b.prototype.controllers={},b.prototype.map={},b.prototype.className="spine stack",b.prototype.add=function(a){return this.manager.add(a),this.append(a)},b}(d.Controller),typeof c!="undefined"&&c!==null&&(c.exports=d.Manager),typeof c!="undefined"&&c!==null&&(c.exports.Stack=d.Stack)})).call(this)},"controllers/a":function(a,b,c){((function(){var a,d,e=Object.prototype.hasOwnProperty,f=function(a,b){function d(){this.constructor=a}for(var c in b)e.call(b,c)&&(a[c]=b[c]);return d.prototype=b.prototype,a.prototype=new d,a.__super__=b.prototype,a};d=b("spine"),a=function(a){function b(){b.__super__.constructor.apply(this,arguments),this.html("I' the first link in the list.")}return f(b,a),b}(d.Controller),c.exports=a})).call(this)},"controllers/app-body":function(a,b,c){((function(){var a,d,e,f,g=Object.prototype.hasOwnProperty,h=function(a,b){function d(){this.constructor=a}for(var c in b)g.call(b,c)&&(a[c]=b[c]);return d.prototype=b.prototype,a.prototype=new d,a.__super__=b.prototype,a};b("spine/lib/manager"),a=b("controllers/a"),d=b("controllers/b"),e=b("controllers/c"),f=function(b){function c(){c.__super__.constructor.apply(this,arguments)}return h(c,b),c.prototype.map={a:"a","b/:sub":"b",c:"c"},c.prototype["default"]="a",c.prototype.controllers={a:a,b:d,c:e},c}(Spine.Stack),c.exports=f})).call(this)},"controllers/app-navigation":function(a,b,c){((function(){var a,d=Object.prototype.hasOwnProperty,e=function(a,b){function e(){this.constructor=a}for(var c in b)d.call(b,c)&&(a[c]=b[c]);return e.prototype=b.prototype,a.prototype=new e,a.__super__=b.prototype,a};b("spine"),b("spine/lib/route"),a=function(a){function c(){c.__super__.constructor.apply(this,arguments),this.html(b("views/navbar")),this.routes({"/":function(){var a,b,c,d,e;d=this.buttons.children(),e=[];for(b=0,c=d.length;b<c;b++)a=d[b],e.push(this.highlight($(a),this["default"]));return e},"*path":function(a){var b,c,d,e,f;e=this.buttons.children(),f=[];for(c=0,d=e.length;c<d;c++)b=e[c],f.push(this.highlight($(b),a.match.input));return f}})}return e(c,a),c.prototype.elements={ul:"buttons"},c.prototype["default"]="a",c.prototype.highlight=function(a,b){return RegExp("^"+$(a.children()[0]).attr("href").slice(1)+".*$").test(b)?a.addClass("active"):a.removeClass("active")},c}(Spine.Controller),c.exports=a})).call(this)},"controllers/b-sub-a":function(a,b,c){((function(){var a,b=Object.prototype.hasOwnProperty,d=function(a,c){function e(){this.constructor=a}for(var d in c)b.call(c,d)&&(a[d]=c[d]);return e.prototype=c.prototype,a.prototype=new e,a.__super__=c.prototype,a};a=function(a){function b(){b.__super__.constructor.apply(this,arguments),this.html("First of the sub menu items")}return d(b,a),b}(Spine.Controller),c.exports=a})).call(this)},"controllers/b-sub-b":function(a,b,c){((function(){var a,b=Object.prototype.hasOwnProperty,d=function(a,c){function e(){this.constructor=a}for(var d in c)b.call(c,d)&&(a[d]=c[d]);return e.prototype=c.prototype,a.prototype=new e,a.__super__=c.prototype,a};a=function(a){function b(){b.__super__.constructor.apply(this,arguments),this.html("Middle one.")}return d(b,a),b}(Spine.Controller),c.exports=a})).call(this)},"controllers/b-sub-c":function(a,b,c){((function(){var a,b=Object.prototype.hasOwnProperty,d=function(a,c){function e(){this.constructor=a}for(var d in c)b.call(c,d)&&(a[d]=c[d]);return e.prototype=c.prototype,a.prototype=new e,a.__super__=c.prototype,a};a=function(a){function b(){b.__super__.constructor.apply(this,arguments),this.html("So I'm the youngest child.")}return d(b,a),b}(Spine.Controller),c.exports=a})).call(this)},"controllers/b":function(a,b,c){((function(){var a,d,e,f,g=Object.prototype.hasOwnProperty,h=function(a,b){function d(){this.constructor=a}for(var c in b)g.call(b,c)&&(a[c]=b[c]);return d.prototype=b.prototype,a.prototype=new d,a.__super__=b.prototype,a};b("spine/lib/manager"),a=b("controllers/b-sub-a"),d=b("controllers/b-sub-b"),e=b("controllers/b-sub-c"),f=function(b){function c(){c.__super__.constructor.apply(this,arguments)}return h(c,b),c.prototype.map={"b/a":"childA","b/b":"childB","b/c":"childC"},c.prototype.controllers={childA:a,childB:d,childC:e},c}(Spine.Stack),c.exports=f})).call(this)},"controllers/c":function(a,b,c){((function(){var a,d,e=Object.prototype.hasOwnProperty,f=function(a,b){function d(){this.constructor=a}for(var c in b)e.call(b,c)&&(a[c]=b[c]);return d.prototype=b.prototype,a.prototype=new d,a.__super__=b.prototype,a};d=b("spine"),a=function(a){function b(){b.__super__.constructor.apply(this,arguments),this.html("The last main-level link")}return f(b,a),b}(d.Controller),c.exports=a})).call(this)},"views/navbar":function(a,b,c){c.exports=function(a){a||(a={});var b=[],c=function(a){var c=b,d;return b=[],a.call(this),d=b.join(""),b=c,e(d)},d=function(a){return a&&a.ecoSafe?a:typeof a!="undefined"&&a!=null?g(a):""},e,f=a.safe,g=a.escape;return e=a.safe=function(a){if(a&&a.ecoSafe)return a;if(typeof a=="undefined"||a==null)a="";var b=new String(a);return b.ecoSafe=!0,b},g||(g=a.escape=function(a){return(""+a).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}),function(){((function(){b.push('<div class="navbar navbar-fixed-top">\n  <div class="navbar-inner">\n    <div class="container">\n      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n      </a>\n\n      <a class="brand" href="#">Bootstrap + Spine</a>\n\n      <div class="nav-collapse collapse">\n        <ul class="nav">\n          <li><a href="#a">Option A</a></li>\n          <li class="dropdown">\n          <a href="#b" class="dropdown-toggle" data-toggle="dropdown">Nested Menu<b class="caret"></b></a>\n          <ul class="dropdown-menu">\n            <li><a href="#b/a">Sub Menu A</a></li>\n            <li><a href="#b/b">Sub Menu B</a></li>\n            <li><a href="#b/c">And something else</a></li>\n          </ul>\n          </li>\n          <li><a href="#c">Another Option</a></li>\n        </ul>\n      </div>\n    </div>\n  </div>\n</div>\n\n')})).call(this)}.call(a),a.safe=f,a.escape=g,b.join("")}}})
+
+
+(function(/*! Stitch !*/) {
+  if (!this.require) {
+    var modules = {}, cache = {}, require = function(name, root) {
+      var path = expand(root, name), indexPath = expand(path, './index'), module, fn;
+      module   = cache[path] || cache[indexPath]      
+      if (module) {
+        return module;
+      } else if (fn = modules[path] || modules[path = indexPath]) {
+        module = {id: path, exports: {}};
+        cache[path] = module.exports;
+        fn(module.exports, function(name) {
+          return require(name, dirname(path));
+        }, module);
+        return cache[path] = module.exports;
+      } else {
+        throw 'module ' + name + ' not found';
+      }
+    }, expand = function(root, name) {
+      var results = [], parts, part;
+      if (/^\.\.?(\/|$)/.test(name)) {
+        parts = [root, name].join('/').split('/');
+      } else {
+        parts = name.split('/');
+      }
+      for (var i = 0, length = parts.length; i < length; i++) {
+        part = parts[i];
+        if (part == '..') {
+          results.pop();
+        } else if (part != '.' && part != '') {
+          results.push(part);
+        }
+      }
+      return results.join('/');
+    }, dirname = function(path) {
+      return path.split('/').slice(0, -1).join('/');
+    };
+    this.require = function(name) {
+      return require(name, '');
+    }
+    this.require.define = function(bundle) {
+      for (var key in bundle)
+        modules[key] = bundle[key];
+    };
+    this.require.modules = modules;
+    this.require.cache   = cache;
+  }
+  return this.require.define;
+}).call(this)({
+  "spine/index": function(exports, require, module) {module.exports = require('./lib/spine');}, "spine/lib/spine": function(exports, require, module) {// Generated by CoffeeScript 1.3.3
+(function() {
+  var $, Controller, Events, Log, Model, Module, Spine, createObject, isArray, isBlank, makeArray, moduleKeywords,
+    __slice = [].slice,
+    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  Events = {
+    bind: function(ev, callback) {
+      var calls, evs, name, _i, _len;
+      evs = ev.split(' ');
+      calls = this.hasOwnProperty('_callbacks') && this._callbacks || (this._callbacks = {});
+      for (_i = 0, _len = evs.length; _i < _len; _i++) {
+        name = evs[_i];
+        calls[name] || (calls[name] = []);
+        calls[name].push(callback);
+      }
+      return this;
+    },
+    one: function(ev, callback) {
+      return this.bind(ev, function() {
+        this.unbind(ev, arguments.callee);
+        return callback.apply(this, arguments);
+      });
+    },
+    trigger: function() {
+      var args, callback, ev, list, _i, _len, _ref;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      ev = args.shift();
+      list = this.hasOwnProperty('_callbacks') && ((_ref = this._callbacks) != null ? _ref[ev] : void 0);
+      if (!list) {
+        return;
+      }
+      for (_i = 0, _len = list.length; _i < _len; _i++) {
+        callback = list[_i];
+        if (callback.apply(this, args) === false) {
+          break;
+        }
+      }
+      return true;
+    },
+    unbind: function(ev, callback) {
+      var cb, i, list, _i, _len, _ref;
+      if (!ev) {
+        this._callbacks = {};
+        return this;
+      }
+      list = (_ref = this._callbacks) != null ? _ref[ev] : void 0;
+      if (!list) {
+        return this;
+      }
+      if (!callback) {
+        delete this._callbacks[ev];
+        return this;
+      }
+      for (i = _i = 0, _len = list.length; _i < _len; i = ++_i) {
+        cb = list[i];
+        if (!(cb === callback)) {
+          continue;
+        }
+        list = list.slice();
+        list.splice(i, 1);
+        this._callbacks[ev] = list;
+        break;
+      }
+      return this;
+    }
+  };
+
+  Log = {
+    trace: true,
+    logPrefix: '(App)',
+    log: function() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      if (!this.trace) {
+        return;
+      }
+      if (this.logPrefix) {
+        args.unshift(this.logPrefix);
+      }
+      if (typeof console !== "undefined" && console !== null) {
+        if (typeof console.log === "function") {
+          console.log.apply(console, args);
+        }
+      }
+      return this;
+    }
+  };
+
+  moduleKeywords = ['included', 'extended'];
+
+  Module = (function() {
+
+    Module.include = function(obj) {
+      var key, value, _ref;
+      if (!obj) {
+        throw 'include(obj) requires obj';
+      }
+      for (key in obj) {
+        value = obj[key];
+        if (__indexOf.call(moduleKeywords, key) < 0) {
+          this.prototype[key] = value;
+        }
+      }
+      if ((_ref = obj.included) != null) {
+        _ref.apply(this);
+      }
+      return this;
+    };
+
+    Module.extend = function(obj) {
+      var key, value, _ref;
+      if (!obj) {
+        throw 'extend(obj) requires obj';
+      }
+      for (key in obj) {
+        value = obj[key];
+        if (__indexOf.call(moduleKeywords, key) < 0) {
+          this[key] = value;
+        }
+      }
+      if ((_ref = obj.extended) != null) {
+        _ref.apply(this);
+      }
+      return this;
+    };
+
+    Module.proxy = function(func) {
+      var _this = this;
+      return function() {
+        return func.apply(_this, arguments);
+      };
+    };
+
+    Module.prototype.proxy = function(func) {
+      var _this = this;
+      return function() {
+        return func.apply(_this, arguments);
+      };
+    };
+
+    function Module() {
+      if (typeof this.init === "function") {
+        this.init.apply(this, arguments);
+      }
+    }
+
+    return Module;
+
+  })();
+
+  Model = (function(_super) {
+
+    __extends(Model, _super);
+
+    Model.extend(Events);
+
+    Model.records = {};
+
+    Model.crecords = {};
+
+    Model.attributes = [];
+
+    Model.configure = function() {
+      var attributes, name;
+      name = arguments[0], attributes = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      this.className = name;
+      this.records = {};
+      this.crecords = {};
+      if (attributes.length) {
+        this.attributes = attributes;
+      }
+      this.attributes && (this.attributes = makeArray(this.attributes));
+      this.attributes || (this.attributes = []);
+      this.unbind();
+      return this;
+    };
+
+    Model.toString = function() {
+      return "" + this.className + "(" + (this.attributes.join(", ")) + ")";
+    };
+
+    Model.find = function(id) {
+      var record;
+      record = this.records[id];
+      if (!record && ("" + id).match(/c-\d+/)) {
+        return this.findCID(id);
+      }
+      if (!record) {
+        throw 'Unknown record';
+      }
+      return record.clone();
+    };
+
+    Model.findCID = function(cid) {
+      var record;
+      record = this.crecords[cid];
+      if (!record) {
+        throw 'Unknown record';
+      }
+      return record.clone();
+    };
+
+    Model.exists = function(id) {
+      try {
+        return this.find(id);
+      } catch (e) {
+        return false;
+      }
+    };
+
+    Model.refresh = function(values, options) {
+      var record, records, _i, _len;
+      if (options == null) {
+        options = {};
+      }
+      if (options.clear) {
+        this.records = {};
+        this.crecords = {};
+      }
+      records = this.fromJSON(values);
+      if (!isArray(records)) {
+        records = [records];
+      }
+      for (_i = 0, _len = records.length; _i < _len; _i++) {
+        record = records[_i];
+        record.id || (record.id = record.cid);
+        this.records[record.id] = record;
+        this.crecords[record.cid] = record;
+      }
+      this.resetIdCounter();
+      this.trigger('refresh', this.cloneArray(records));
+      return this;
+    };
+
+    Model.select = function(callback) {
+      var id, record, result;
+      result = (function() {
+        var _ref, _results;
+        _ref = this.records;
+        _results = [];
+        for (id in _ref) {
+          record = _ref[id];
+          if (callback(record)) {
+            _results.push(record);
+          }
+        }
+        return _results;
+      }).call(this);
+      return this.cloneArray(result);
+    };
+
+    Model.findByAttribute = function(name, value) {
+      var id, record, _ref;
+      _ref = this.records;
+      for (id in _ref) {
+        record = _ref[id];
+        if (record[name] === value) {
+          return record.clone();
+        }
+      }
+      return null;
+    };
+
+    Model.findAllByAttribute = function(name, value) {
+      return this.select(function(item) {
+        return item[name] === value;
+      });
+    };
+
+    Model.each = function(callback) {
+      var key, value, _ref, _results;
+      _ref = this.records;
+      _results = [];
+      for (key in _ref) {
+        value = _ref[key];
+        _results.push(callback(value.clone()));
+      }
+      return _results;
+    };
+
+    Model.all = function() {
+      return this.cloneArray(this.recordsValues());
+    };
+
+    Model.first = function() {
+      var record;
+      record = this.recordsValues()[0];
+      return record != null ? record.clone() : void 0;
+    };
+
+    Model.last = function() {
+      var record, values;
+      values = this.recordsValues();
+      record = values[values.length - 1];
+      return record != null ? record.clone() : void 0;
+    };
+
+    Model.count = function() {
+      return this.recordsValues().length;
+    };
+
+    Model.deleteAll = function() {
+      var key, value, _ref, _results;
+      _ref = this.records;
+      _results = [];
+      for (key in _ref) {
+        value = _ref[key];
+        _results.push(delete this.records[key]);
+      }
+      return _results;
+    };
+
+    Model.destroyAll = function() {
+      var key, value, _ref, _results;
+      _ref = this.records;
+      _results = [];
+      for (key in _ref) {
+        value = _ref[key];
+        _results.push(this.records[key].destroy());
+      }
+      return _results;
+    };
+
+    Model.update = function(id, atts, options) {
+      return this.find(id).updateAttributes(atts, options);
+    };
+
+    Model.create = function(atts, options) {
+      var record;
+      record = new this(atts);
+      return record.save(options);
+    };
+
+    Model.destroy = function(id, options) {
+      return this.find(id).destroy(options);
+    };
+
+    Model.change = function(callbackOrParams) {
+      if (typeof callbackOrParams === 'function') {
+        return this.bind('change', callbackOrParams);
+      } else {
+        return this.trigger('change', callbackOrParams);
+      }
+    };
+
+    Model.fetch = function(callbackOrParams) {
+      if (typeof callbackOrParams === 'function') {
+        return this.bind('fetch', callbackOrParams);
+      } else {
+        return this.trigger('fetch', callbackOrParams);
+      }
+    };
+
+    Model.toJSON = function() {
+      return this.recordsValues();
+    };
+
+    Model.fromJSON = function(objects) {
+      var value, _i, _len, _results;
+      if (!objects) {
+        return;
+      }
+      if (typeof objects === 'string') {
+        objects = JSON.parse(objects);
+      }
+      if (isArray(objects)) {
+        _results = [];
+        for (_i = 0, _len = objects.length; _i < _len; _i++) {
+          value = objects[_i];
+          _results.push(new this(value));
+        }
+        return _results;
+      } else {
+        return new this(objects);
+      }
+    };
+
+    Model.fromForm = function() {
+      var _ref;
+      return (_ref = new this).fromForm.apply(_ref, arguments);
+    };
+
+    Model.recordsValues = function() {
+      var key, result, value, _ref;
+      result = [];
+      _ref = this.records;
+      for (key in _ref) {
+        value = _ref[key];
+        result.push(value);
+      }
+      return result;
+    };
+
+    Model.cloneArray = function(array) {
+      var value, _i, _len, _results;
+      _results = [];
+      for (_i = 0, _len = array.length; _i < _len; _i++) {
+        value = array[_i];
+        _results.push(value.clone());
+      }
+      return _results;
+    };
+
+    Model.idCounter = 0;
+
+    Model.resetIdCounter = function() {
+      var ids, lastID, model, parseCID;
+      parseCID = function(cid) {
+        cid = (cid != null ? typeof cid.replace === "function" ? cid.replace(/^c-/, '') : void 0 : void 0) || cid;
+        return parseInt(cid, 10);
+      };
+      ids = ((function() {
+        var _i, _len, _ref, _results;
+        _ref = this.all();
+        _results = [];
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          model = _ref[_i];
+          _results.push(parseCID(model.cid));
+        }
+        return _results;
+      }).call(this)).sort(function(a, b) {
+        return a > b;
+      });
+      lastID = ids[ids.length - 1];
+      return this.idCounter = (lastID + 1) || 0;
+    };
+
+    Model.uid = function(prefix) {
+      if (prefix == null) {
+        prefix = '';
+      }
+      return prefix + this.idCounter++;
+    };
+
+    function Model(atts) {
+      Model.__super__.constructor.apply(this, arguments);
+      if (atts) {
+        this.load(atts);
+      }
+      this.cid || (this.cid = this.constructor.uid('c-'));
+    }
+
+    Model.prototype.isNew = function() {
+      return !this.exists();
+    };
+
+    Model.prototype.isValid = function() {
+      return !this.validate();
+    };
+
+    Model.prototype.validate = function() {};
+
+    Model.prototype.load = function(atts) {
+      var key, value;
+      for (key in atts) {
+        value = atts[key];
+        if (typeof this[key] === 'function') {
+          this[key](value);
+        } else {
+          this[key] = value;
+        }
+      }
+      return this;
+    };
+
+    Model.prototype.attributes = function() {
+      var key, result, _i, _len, _ref;
+      result = {};
+      _ref = this.constructor.attributes;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        key = _ref[_i];
+        if (key in this) {
+          if (typeof this[key] === 'function') {
+            result[key] = this[key]();
+          } else {
+            result[key] = this[key];
+          }
+        }
+      }
+      if (this.id) {
+        result.id = this.id;
+      }
+      return result;
+    };
+
+    Model.prototype.eql = function(rec) {
+      return !!(rec && rec.constructor === this.constructor && (rec.cid === this.cid) || (rec.id && rec.id === this.id));
+    };
+
+    Model.prototype.save = function(options) {
+      var error, record;
+      if (options == null) {
+        options = {};
+      }
+      if (options.validate !== false) {
+        error = this.validate();
+        if (error) {
+          this.trigger('error', error);
+          return false;
+        }
+      }
+      this.trigger('beforeSave', options);
+      record = this.isNew() ? this.create(options) : this.update(options);
+      this.trigger('save', options);
+      return record;
+    };
+
+    Model.prototype.updateAttribute = function(name, value, options) {
+      this[name] = value;
+      return this.save(options);
+    };
+
+    Model.prototype.updateAttributes = function(atts, options) {
+      this.load(atts);
+      return this.save(options);
+    };
+
+    Model.prototype.changeID = function(id) {
+      var records;
+      records = this.constructor.records;
+      records[id] = records[this.id];
+      delete records[this.id];
+      this.id = id;
+      return this.save();
+    };
+
+    Model.prototype.destroy = function(options) {
+      if (options == null) {
+        options = {};
+      }
+      this.trigger('beforeDestroy', options);
+      delete this.constructor.records[this.id];
+      delete this.constructor.crecords[this.cid];
+      this.destroyed = true;
+      this.trigger('destroy', options);
+      this.trigger('change', 'destroy', options);
+      this.unbind();
+      return this;
+    };
+
+    Model.prototype.dup = function(newRecord) {
+      var result;
+      result = new this.constructor(this.attributes());
+      if (newRecord === false) {
+        result.cid = this.cid;
+      } else {
+        delete result.id;
+      }
+      return result;
+    };
+
+    Model.prototype.clone = function() {
+      return createObject(this);
+    };
+
+    Model.prototype.reload = function() {
+      var original;
+      if (this.isNew()) {
+        return this;
+      }
+      original = this.constructor.find(this.id);
+      this.load(original.attributes());
+      return original;
+    };
+
+    Model.prototype.toJSON = function() {
+      return this.attributes();
+    };
+
+    Model.prototype.toString = function() {
+      return "<" + this.constructor.className + " (" + (JSON.stringify(this)) + ")>";
+    };
+
+    Model.prototype.fromForm = function(form) {
+      var key, result, _i, _len, _ref;
+      result = {};
+      _ref = $(form).serializeArray();
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        key = _ref[_i];
+        result[key.name] = key.value;
+      }
+      return this.load(result);
+    };
+
+    Model.prototype.exists = function() {
+      return this.id && this.id in this.constructor.records;
+    };
+
+    Model.prototype.update = function(options) {
+      var clone, records;
+      this.trigger('beforeUpdate', options);
+      records = this.constructor.records;
+      records[this.id].load(this.attributes());
+      clone = records[this.id].clone();
+      clone.trigger('update', options);
+      clone.trigger('change', 'update', options);
+      return clone;
+    };
+
+    Model.prototype.create = function(options) {
+      var clone, record;
+      this.trigger('beforeCreate', options);
+      if (!this.id) {
+        this.id = this.cid;
+      }
+      record = this.dup(false);
+      this.constructor.records[this.id] = record;
+      this.constructor.crecords[this.cid] = record;
+      clone = record.clone();
+      clone.trigger('create', options);
+      clone.trigger('change', 'create', options);
+      return clone;
+    };
+
+    Model.prototype.bind = function(events, callback) {
+      var binder, unbinder,
+        _this = this;
+      this.constructor.bind(events, binder = function(record) {
+        if (record && _this.eql(record)) {
+          return callback.apply(_this, arguments);
+        }
+      });
+      this.constructor.bind('unbind', unbinder = function(record) {
+        if (record && _this.eql(record)) {
+          _this.constructor.unbind(events, binder);
+          return _this.constructor.unbind('unbind', unbinder);
+        }
+      });
+      return binder;
+    };
+
+    Model.prototype.one = function(events, callback) {
+      var binder,
+        _this = this;
+      return binder = this.bind(events, function() {
+        _this.constructor.unbind(events, binder);
+        return callback.apply(_this, arguments);
+      });
+    };
+
+    Model.prototype.trigger = function() {
+      var args, _ref;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      args.splice(1, 0, this);
+      return (_ref = this.constructor).trigger.apply(_ref, args);
+    };
+
+    Model.prototype.unbind = function() {
+      return this.trigger('unbind');
+    };
+
+    return Model;
+
+  })(Module);
+
+  Controller = (function(_super) {
+
+    __extends(Controller, _super);
+
+    Controller.include(Events);
+
+    Controller.include(Log);
+
+    Controller.prototype.eventSplitter = /^(\S+)\s*(.*)$/;
+
+    Controller.prototype.tag = 'div';
+
+    function Controller(options) {
+      this.release = __bind(this.release, this);
+
+      var key, value, _ref;
+      this.options = options;
+      _ref = this.options;
+      for (key in _ref) {
+        value = _ref[key];
+        this[key] = value;
+      }
+      if (!this.el) {
+        this.el = document.createElement(this.tag);
+      }
+      this.el = $(this.el);
+      if (this.className) {
+        this.el.addClass(this.className);
+      }
+      if (this.attributes) {
+        this.el.attr(this.attributes);
+      }
+      if (!this.events) {
+        this.events = this.constructor.events;
+      }
+      if (!this.elements) {
+        this.elements = this.constructor.elements;
+      }
+      if (this.events) {
+        this.delegateEvents(this.events);
+      }
+      if (this.elements) {
+        this.refreshElements();
+      }
+      Controller.__super__.constructor.apply(this, arguments);
+    }
+
+    Controller.prototype.release = function() {
+      this.trigger('release');
+      this.el.remove();
+      return this.unbind();
+    };
+
+    Controller.prototype.$ = function(selector) {
+      return $(selector, this.el);
+    };
+
+    Controller.prototype.delegateEvents = function(events) {
+      var eventName, key, match, method, selector, _results,
+        _this = this;
+      _results = [];
+      for (key in events) {
+        method = events[key];
+        if (typeof method === 'function') {
+          method = (function(method) {
+            return function() {
+              method.apply(_this, arguments);
+              return true;
+            };
+          })(method);
+        } else {
+          method = (function(method) {
+            return function() {
+              _this[method].apply(_this, arguments);
+              return true;
+            };
+          })(method);
+        }
+        match = key.match(this.eventSplitter);
+        eventName = match[1];
+        selector = match[2];
+        if (selector === '') {
+          _results.push(this.el.bind(eventName, method));
+        } else {
+          _results.push(this.el.delegate(selector, eventName, method));
+        }
+      }
+      return _results;
+    };
+
+    Controller.prototype.refreshElements = function() {
+      var key, value, _ref, _results;
+      _ref = this.elements;
+      _results = [];
+      for (key in _ref) {
+        value = _ref[key];
+        _results.push(this[value] = this.$(key));
+      }
+      return _results;
+    };
+
+    Controller.prototype.delay = function(func, timeout) {
+      return setTimeout(this.proxy(func), timeout || 0);
+    };
+
+    Controller.prototype.html = function(element) {
+      this.el.html(element.el || element);
+      this.refreshElements();
+      return this.el;
+    };
+
+    Controller.prototype.append = function() {
+      var e, elements, _ref;
+      elements = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      elements = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = elements.length; _i < _len; _i++) {
+          e = elements[_i];
+          _results.push(e.el || e);
+        }
+        return _results;
+      })();
+      (_ref = this.el).append.apply(_ref, elements);
+      this.refreshElements();
+      return this.el;
+    };
+
+    Controller.prototype.appendTo = function(element) {
+      this.el.appendTo(element.el || element);
+      this.refreshElements();
+      return this.el;
+    };
+
+    Controller.prototype.prepend = function() {
+      var e, elements, _ref;
+      elements = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      elements = (function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = elements.length; _i < _len; _i++) {
+          e = elements[_i];
+          _results.push(e.el || e);
+        }
+        return _results;
+      })();
+      (_ref = this.el).prepend.apply(_ref, elements);
+      this.refreshElements();
+      return this.el;
+    };
+
+    Controller.prototype.replace = function(element) {
+      var previous, _ref;
+      _ref = [this.el, $(element.el || element)], previous = _ref[0], this.el = _ref[1];
+      previous.replaceWith(this.el);
+      this.delegateEvents(this.events);
+      this.refreshElements();
+      return this.el;
+    };
+
+    return Controller;
+
+  })(Module);
+
+  $ = (typeof window !== "undefined" && window !== null ? window.jQuery : void 0) || (typeof window !== "undefined" && window !== null ? window.Zepto : void 0) || function(element) {
+    return element;
+  };
+
+  createObject = Object.create || function(o) {
+    var Func;
+    Func = function() {};
+    Func.prototype = o;
+    return new Func();
+  };
+
+  isArray = function(value) {
+    return Object.prototype.toString.call(value) === '[object Array]';
+  };
+
+  isBlank = function(value) {
+    var key;
+    if (!value) {
+      return true;
+    }
+    for (key in value) {
+      return false;
+    }
+    return true;
+  };
+
+  makeArray = function(args) {
+    return Array.prototype.slice.call(args, 0);
+  };
+
+  Spine = this.Spine = {};
+
+  if (typeof module !== "undefined" && module !== null) {
+    module.exports = Spine;
+  }
+
+  Spine.version = '1.0.6';
+
+  Spine.isArray = isArray;
+
+  Spine.isBlank = isBlank;
+
+  Spine.$ = $;
+
+  Spine.Events = Events;
+
+  Spine.Log = Log;
+
+  Spine.Module = Module;
+
+  Spine.Controller = Controller;
+
+  Spine.Model = Model;
+
+  Module.extend.call(Spine, Events);
+
+  Module.create = Module.sub = Controller.create = Controller.sub = Model.sub = function(instances, statics) {
+    var result;
+    result = (function(_super) {
+
+      __extends(result, _super);
+
+      function result() {
+        return result.__super__.constructor.apply(this, arguments);
+      }
+
+      return result;
+
+    })(this);
+    if (instances) {
+      result.include(instances);
+    }
+    if (statics) {
+      result.extend(statics);
+    }
+    if (typeof result.unbind === "function") {
+      result.unbind();
+    }
+    return result;
+  };
+
+  Model.setup = function(name, attributes) {
+    var Instance;
+    if (attributes == null) {
+      attributes = [];
+    }
+    Instance = (function(_super) {
+
+      __extends(Instance, _super);
+
+      function Instance() {
+        return Instance.__super__.constructor.apply(this, arguments);
+      }
+
+      return Instance;
+
+    })(this);
+    Instance.configure.apply(Instance, [name].concat(__slice.call(attributes)));
+    return Instance;
+  };
+
+  Module.init = Controller.init = Model.init = function(a1, a2, a3, a4, a5) {
+    return new this(a1, a2, a3, a4, a5);
+  };
+
+  Spine.Class = Module;
+
+}).call(this);
+}, "spine/lib/route": function(exports, require, module) {// Generated by CoffeeScript 1.3.3
+(function() {
+  var $, Spine, escapeRegExp, hashStrip, namedParam, splatParam,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __slice = [].slice;
+
+  Spine = this.Spine || require('spine');
+
+  $ = Spine.$;
+
+  hashStrip = /^#*/;
+
+  namedParam = /:([\w\d]+)/g;
+
+  splatParam = /\*([\w\d]+)/g;
+
+  escapeRegExp = /[-[\]{}()+?.,\\^$|#\s]/g;
+
+  Spine.Route = (function(_super) {
+    var _ref;
+
+    __extends(Route, _super);
+
+    Route.extend(Spine.Events);
+
+    Route.historySupport = ((_ref = window.history) != null ? _ref.pushState : void 0) != null;
+
+    Route.routes = [];
+
+    Route.options = {
+      trigger: true,
+      history: false,
+      shim: false
+    };
+
+    Route.add = function(path, callback) {
+      var key, value, _results;
+      if (typeof path === 'object' && !(path instanceof RegExp)) {
+        _results = [];
+        for (key in path) {
+          value = path[key];
+          _results.push(this.add(key, value));
+        }
+        return _results;
+      } else {
+        return this.routes.push(new this(path, callback));
+      }
+    };
+
+    Route.addMap = function(list) {
+      var key, newArray, value;
+      newArray = [];
+      for (key in list) {
+        value = list[key];
+        newArray.push(new this(key, value));
+      }
+      return this.routes.push(newArray);
+    };
+
+    Route.setup = function(options) {
+      if (options == null) {
+        options = {};
+      }
+      this.options = $.extend({}, this.options, options);
+      if (this.options.history) {
+        this.history = this.historySupport && this.options.history;
+      }
+      if (this.options.shim) {
+        return;
+      }
+      if (this.history) {
+        $(window).bind('popstate', this.change);
+      } else {
+        $(window).bind('hashchange', this.change);
+      }
+      return this.change();
+    };
+
+    Route.unbind = function() {
+      if (this.history) {
+        return $(window).unbind('popstate', this.change);
+      } else {
+        return $(window).unbind('hashchange', this.change);
+      }
+    };
+
+    Route.navigate = function() {
+      var args, lastArg, options, path;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      options = {};
+      lastArg = args[args.length - 1];
+      if (typeof lastArg === 'object') {
+        options = args.pop();
+      } else if (typeof lastArg === 'boolean') {
+        options.trigger = args.pop();
+      }
+      options = $.extend({}, this.options, options);
+      path = args.join('/');
+      if (this.path === path) {
+        return;
+      }
+      this.path = path;
+      this.trigger('navigate', this.path);
+      if (options.trigger) {
+        this.matchRoute(this.path, options);
+      }
+      if (options.shim) {
+        return;
+      }
+      if (this.history) {
+        return history.pushState({}, document.title, this.path);
+      } else {
+        return window.location.hash = this.path;
+      }
+    };
+
+    Route.getPath = function() {
+      var path;
+      path = window.location.pathname;
+      if (path.substr(0, 1) !== '/') {
+        path = '/' + path;
+      }
+      return path;
+    };
+
+    Route.getHash = function() {
+      return window.location.hash;
+    };
+
+    Route.getFragment = function() {
+      return this.getHash().replace(hashStrip, '');
+    };
+
+    Route.getHost = function() {
+      return (document.location + '').replace(this.getPath() + this.getHash(), '');
+    };
+
+    Route.change = function() {
+      var path;
+      path = this.getFragment() !== '' ? this.getFragment() : this.getPath();
+      if (path === this.path) {
+        return;
+      }
+      this.path = path;
+      return this.matchRoute(this.path);
+    };
+
+    Route.matchRoute = function(path, options) {
+      var contextRoute, contextualMatches, match, route, _i, _j, _k, _len, _len1, _len2, _ref1, _results;
+      contextualMatches = [];
+      _ref1 = this.routes;
+      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+        route = _ref1[_i];
+        if (route instanceof Array) {
+          for (_j = 0, _len1 = route.length; _j < _len1; _j++) {
+            contextRoute = route[_j];
+            if (contextRoute.match(path, options)) {
+              contextualMatches.push(contextRoute);
+              break;
+            }
+          }
+        } else if (route.match(path, options)) {
+          this.trigger('change', route, path);
+          return route;
+        }
+      }
+      _results = [];
+      for (_k = 0, _len2 = contextualMatches.length; _k < _len2; _k++) {
+        match = contextualMatches[_k];
+        _results.push(this.trigger('change', match, path));
+      }
+      return _results;
+    };
+
+    function Route(path, callback) {
+      var match;
+      this.path = path;
+      this.callback = callback;
+      this.names = [];
+      if (typeof path === 'string') {
+        namedParam.lastIndex = 0;
+        while ((match = namedParam.exec(path)) !== null) {
+          this.names.push(match[1]);
+        }
+        path = path.replace(escapeRegExp, '\\$&').replace(namedParam, '([^\/]*)').replace(splatParam, '(.*?)');
+        this.route = new RegExp('^' + path + '$');
+      } else {
+        this.route = path;
+      }
+    }
+
+    Route.prototype.match = function(path, options) {
+      var i, match, param, params, _i, _len;
+      if (options == null) {
+        options = {};
+      }
+      match = this.route.exec(path);
+      if (!match) {
+        return false;
+      }
+      options.match = match;
+      params = match.slice(1);
+      if (this.names.length) {
+        for (i = _i = 0, _len = params.length; _i < _len; i = ++_i) {
+          param = params[i];
+          options[this.names[i]] = param;
+        }
+      }
+      return this.callback.call(null, options) !== false;
+    };
+
+    return Route;
+
+  })(Spine.Module);
+
+  Spine.Route.change = Spine.Route.proxy(Spine.Route.change);
+
+  Spine.Controller.include({
+    routes: function(routes) {
+      var callback, path, proxiedRoutes;
+      proxiedRoutes = {};
+      for (path in routes) {
+        callback = routes[path];
+        proxiedRoutes[path] = this.proxy(callback);
+      }
+      return Spine.Route.addMap(proxiedRoutes);
+    },
+    navigate: function() {
+      return Spine.Route.navigate.apply(Spine.Route, arguments);
+    }
+  });
+
+  if (typeof module !== "undefined" && module !== null) {
+    module.exports = Spine.Route;
+  }
+
+}).call(this);
+}, "spine/lib/manager": function(exports, require, module) {// Generated by CoffeeScript 1.3.3
+(function() {
+  var $, Spine,
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
+    __slice = [].slice;
+
+  Spine = this.Spine || require('spine');
+
+  $ = Spine.$;
+
+  Spine.Manager = (function(_super) {
+
+    __extends(Manager, _super);
+
+    Manager.include(Spine.Events);
+
+    function Manager() {
+      this.controllers = [];
+      this.bind('change', this.change);
+      this.add.apply(this, arguments);
+    }
+
+    Manager.prototype.add = function() {
+      var cont, controllers, _i, _len, _results;
+      controllers = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      _results = [];
+      for (_i = 0, _len = controllers.length; _i < _len; _i++) {
+        cont = controllers[_i];
+        _results.push(this.addOne(cont));
+      }
+      return _results;
+    };
+
+    Manager.prototype.addOne = function(controller) {
+      var _this = this;
+      controller.bind('active', function() {
+        var args;
+        args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+        return _this.trigger.apply(_this, ['change', controller].concat(__slice.call(args)));
+      });
+      controller.bind('release', function() {
+        return _this.controllers.splice(_this.controllers.indexOf(controller), 1);
+      });
+      return this.controllers.push(controller);
+    };
+
+    Manager.prototype.deactivate = function() {
+      return this.trigger.apply(this, ['change', false].concat(__slice.call(arguments)));
+    };
+
+    Manager.prototype.change = function() {
+      var args, cont, current, _i, _len, _ref, _results;
+      current = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      _ref = this.controllers;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        cont = _ref[_i];
+        if (cont === current) {
+          _results.push(cont.activate.apply(cont, args));
+        } else {
+          _results.push(cont.deactivate.apply(cont, args));
+        }
+      }
+      return _results;
+    };
+
+    return Manager;
+
+  })(Spine.Module);
+
+  Spine.Controller.include({
+    active: function() {
+      var args;
+      args = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      if (typeof args[0] === 'function') {
+        this.bind('active', args[0]);
+      } else {
+        args.unshift('active');
+        this.trigger.apply(this, args);
+      }
+      return this;
+    },
+    isActive: function() {
+      return this.el.hasClass('active');
+    },
+    activate: function() {
+      this.el.addClass('active');
+      return this;
+    },
+    deactivate: function() {
+      this.el.removeClass('active');
+      return this;
+    }
+  });
+
+  Spine.Stack = (function(_super) {
+
+    __extends(Stack, _super);
+
+    Stack.prototype.controllers = {};
+
+    Stack.prototype.map = {};
+
+    Stack.prototype.className = 'spine stack';
+
+    function Stack() {
+      var key, resolvedRoutes, value, _fn, _ref, _ref1,
+        _this = this;
+      Stack.__super__.constructor.apply(this, arguments);
+      this.manager = new Spine.Manager;
+      _ref = this.controllers;
+      for (key in _ref) {
+        value = _ref[key];
+        this[key] = new value({
+          stack: this
+        });
+        this.add(this[key]);
+      }
+      resolvedRoutes = {};
+      _ref1 = this.map;
+      _fn = function(key, value) {
+        var callback;
+        if (typeof value === 'function') {
+          callback = value;
+        }
+        callback || (callback = function() {
+          var _ref2;
+          return (_ref2 = _this[value]).active.apply(_ref2, arguments);
+        });
+        return resolvedRoutes[key] = callback;
+      };
+      for (key in _ref1) {
+        value = _ref1[key];
+        _fn(key, value);
+      }
+      this.routes(resolvedRoutes);
+      if (this["default"]) {
+        this[this["default"]].active();
+      }
+    }
+
+    Stack.prototype.add = function(controller) {
+      this.manager.add(controller);
+      return this.append(controller);
+    };
+
+    return Stack;
+
+  })(Spine.Controller);
+
+  if (typeof module !== "undefined" && module !== null) {
+    module.exports = Spine.Manager;
+  }
+
+  if (typeof module !== "undefined" && module !== null) {
+    module.exports.Stack = Spine.Stack;
+  }
+
+}).call(this);
+}, "controllers/a": function(exports, require, module) {(function() {
+  var ControllerA, Spine,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  Spine = require('spine');
+
+  ControllerA = (function(_super) {
+
+    __extends(ControllerA, _super);
+
+    function ControllerA() {
+      ControllerA.__super__.constructor.apply(this, arguments);
+      this.html('I\' the first link in the list.');
+    }
+
+    return ControllerA;
+
+  })(Spine.Controller);
+
+  module.exports = ControllerA;
+
+}).call(this);
+}, "controllers/app-body": function(exports, require, module) {(function() {
+  var ControllerA, ControllerB, ControllerC, Main,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  require('spine/lib/manager');
+
+  ControllerA = require('controllers/a');
+
+  ControllerB = require('controllers/b');
+
+  ControllerC = require('controllers/c');
+
+  Main = (function(_super) {
+
+    __extends(Main, _super);
+
+    function Main() {
+      Main.__super__.constructor.apply(this, arguments);
+    }
+
+    Main.prototype.map = {
+      'a': 'a',
+      'b/:sub': 'b',
+      'c': 'c'
+    };
+
+    Main.prototype["default"] = 'a';
+
+    Main.prototype.controllers = {
+      a: ControllerA,
+      b: ControllerB,
+      c: ControllerC
+    };
+
+    return Main;
+
+  })(Spine.Stack);
+
+  module.exports = Main;
+
+}).call(this);
+}, "controllers/app-navigation": function(exports, require, module) {(function() {
+  var NavBar,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  require('spine');
+
+  require('spine/lib/route');
+
+  NavBar = (function(_super) {
+
+    __extends(NavBar, _super);
+
+    NavBar.prototype.elements = {
+      'ul': 'buttons'
+    };
+
+    NavBar.prototype["default"] = 'a';
+
+    NavBar.prototype.highlight = function(item, highlight) {
+      if (RegExp("^" + ($(item.children()[0]).attr('href').slice(1)) + ".*$").test(highlight)) {
+        return item.addClass('active');
+      } else {
+        return item.removeClass('active');
+      }
+    };
+
+    function NavBar() {
+      NavBar.__super__.constructor.apply(this, arguments);
+      this.html(require('views/navbar'));
+      this.routes({
+        '/': function() {
+          var button, _i, _len, _ref, _results;
+          _ref = this.buttons.children();
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            button = _ref[_i];
+            _results.push(this.highlight($(button), this["default"]));
+          }
+          return _results;
+        },
+        '*path': function(path) {
+          var button, _i, _len, _ref, _results;
+          _ref = this.buttons.children();
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            button = _ref[_i];
+            _results.push(this.highlight($(button), path.match.input));
+          }
+          return _results;
+        }
+      });
+    }
+
+    return NavBar;
+
+  })(Spine.Controller);
+
+  module.exports = NavBar;
+
+}).call(this);
+}, "controllers/b-sub-a": function(exports, require, module) {(function() {
+  var ChildAController,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  ChildAController = (function(_super) {
+
+    __extends(ChildAController, _super);
+
+    function ChildAController() {
+      ChildAController.__super__.constructor.apply(this, arguments);
+      this.html('First of the sub menu items');
+    }
+
+    return ChildAController;
+
+  })(Spine.Controller);
+
+  module.exports = ChildAController;
+
+}).call(this);
+}, "controllers/b-sub-b": function(exports, require, module) {(function() {
+  var ChildBController,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  ChildBController = (function(_super) {
+
+    __extends(ChildBController, _super);
+
+    function ChildBController() {
+      ChildBController.__super__.constructor.apply(this, arguments);
+      this.html('Middle one.');
+    }
+
+    return ChildBController;
+
+  })(Spine.Controller);
+
+  module.exports = ChildBController;
+
+}).call(this);
+}, "controllers/b-sub-c": function(exports, require, module) {(function() {
+  var ChildCController,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  ChildCController = (function(_super) {
+
+    __extends(ChildCController, _super);
+
+    function ChildCController() {
+      ChildCController.__super__.constructor.apply(this, arguments);
+      this.html('So I\'m the youngest child.');
+    }
+
+    return ChildCController;
+
+  })(Spine.Controller);
+
+  module.exports = ChildCController;
+
+}).call(this);
+}, "controllers/b": function(exports, require, module) {(function() {
+  var ChildAController, ChildBController, ChildCController, ControllerB,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  require('spine/lib/manager');
+
+  ChildAController = require('controllers/b-sub-a');
+
+  ChildBController = require('controllers/b-sub-b');
+
+  ChildCController = require('controllers/b-sub-c');
+
+  ControllerB = (function(_super) {
+
+    __extends(ControllerB, _super);
+
+    function ControllerB() {
+      ControllerB.__super__.constructor.apply(this, arguments);
+    }
+
+    ControllerB.prototype.map = {
+      'b/a': 'childA',
+      'b/b': 'childB',
+      'b/c': 'childC'
+    };
+
+    ControllerB.prototype.controllers = {
+      childA: ChildAController,
+      childB: ChildBController,
+      childC: ChildCController
+    };
+
+    return ControllerB;
+
+  })(Spine.Stack);
+
+  module.exports = ControllerB;
+
+}).call(this);
+}, "controllers/c": function(exports, require, module) {(function() {
+  var ControllerC, Spine,
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  Spine = require('spine');
+
+  ControllerC = (function(_super) {
+
+    __extends(ControllerC, _super);
+
+    function ControllerC() {
+      ControllerC.__super__.constructor.apply(this, arguments);
+      this.html('The last main-level link');
+    }
+
+    return ControllerC;
+
+  })(Spine.Controller);
+
+  module.exports = ControllerC;
+
+}).call(this);
+}, "views/navbar": function(exports, require, module) {module.exports = function(__obj) {
+  if (!__obj) __obj = {};
+  var __out = [], __capture = function(callback) {
+    var out = __out, result;
+    __out = [];
+    callback.call(this);
+    result = __out.join('');
+    __out = out;
+    return __safe(result);
+  }, __sanitize = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else if (typeof value !== 'undefined' && value != null) {
+      return __escape(value);
+    } else {
+      return '';
+    }
+  }, __safe, __objSafe = __obj.safe, __escape = __obj.escape;
+  __safe = __obj.safe = function(value) {
+    if (value && value.ecoSafe) {
+      return value;
+    } else {
+      if (!(typeof value !== 'undefined' && value != null)) value = '';
+      var result = new String(value);
+      result.ecoSafe = true;
+      return result;
+    }
+  };
+  if (!__escape) {
+    __escape = __obj.escape = function(value) {
+      return ('' + value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    };
+  }
+  (function() {
+    (function() {
+    
+      __out.push('<div class="navbar navbar-fixed-top">\n  <div class="navbar-inner">\n    <div class="container">\n      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n      </a>\n\n      <a class="brand" href="#">Bootstrap + Spine</a>\n\n      <div class="nav-collapse collapse">\n        <ul class="nav">\n          <li><a href="#a">Option A</a></li>\n          <li class="dropdown">\n          <a href="#b" class="dropdown-toggle" data-toggle="dropdown">Nested Menu<b class="caret"></b></a>\n          <ul class="dropdown-menu">\n            <li><a href="#b/a">Sub Menu A</a></li>\n            <li><a href="#b/b">Sub Menu B</a></li>\n            <li><a href="#b/c">And something else</a></li>\n          </ul>\n          </li>\n          <li><a href="#c">Another Option</a></li>\n        </ul>\n      </div>\n    </div>\n  </div>\n</div>\n\n');
+    
+    }).call(this);
+    
+  }).call(__obj);
+  __obj.safe = __objSafe, __obj.escape = __escape;
+  return __out.join('');
+}}
+});
