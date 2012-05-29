@@ -1751,7 +1751,18 @@
 
     NavBar.prototype["default"] = 'a';
 
-    NavBar.prototype.highlight = function(item, highlight) {
+    NavBar.prototype.highlight = function(path) {
+      var button, _i, _len, _ref, _results;
+      _ref = this.buttons.children();
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        button = _ref[_i];
+        _results.push(this.highlightItem($(button), path));
+      }
+      return _results;
+    };
+
+    NavBar.prototype.highlightItem = function(item, highlight) {
       if (RegExp("^" + ($(item.children()[0]).attr('href').slice(1)) + ".*$").test(highlight)) {
         return item.addClass('active');
       } else {
@@ -1763,21 +1774,17 @@
       NavBar.__super__.constructor.apply(this, arguments);
       this.html(require('views/navbar'));
       this.routes({
-        '*path': function(path) {
-          var button, location, properPath, _i, _len, _ref, _results;
-          location = path.match.input.indexOf('#');
-          if (location === -1) {
-            properPath = this["default"];
-          } else {
-            properPath = path.match.input.slice(location);
-          }
-          _ref = this.buttons.children();
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            button = _ref[_i];
-            _results.push(this.highlight($(button), properPath));
-          }
-          return _results;
+        'a': function() {
+          return this.highlight('a');
+        },
+        'b/:path': function(path) {
+          return this.highlight(path.match.input);
+        },
+        'c': function() {
+          return this.highlight('c');
+        },
+        ':default': function() {
+          return this.highlight(this["default"]);
         }
       });
     }
