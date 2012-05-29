@@ -1,1 +1,0 @@
-../../git_modules/bootstrap/docs/assets/js/bootstrap-collapse.js

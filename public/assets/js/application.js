@@ -1,4 +1,321 @@
+/* ===================================================
+ * bootstrap-transition.js v2.0.3
+ * http://twitter.github.com/bootstrap/javascript.html#transitions
+ * ===================================================
+ * Copyright 2012 Twitter, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ========================================================== */
 
+
+!function ($) {
+
+  $(function () {
+
+    "use strict"; // jshint ;_;
+
+
+    /* CSS TRANSITION SUPPORT (http://www.modernizr.com/)
+     * ======================================================= */
+
+    $.support.transition = (function () {
+
+      var transitionEnd = (function () {
+
+        var el = document.createElement('bootstrap')
+          , transEndEventNames = {
+               'WebkitTransition' : 'webkitTransitionEnd'
+            ,  'MozTransition'    : 'transitionend'
+            ,  'OTransition'      : 'oTransitionEnd'
+            ,  'msTransition'     : 'MSTransitionEnd'
+            ,  'transition'       : 'transitionend'
+            }
+          , name
+
+        for (name in transEndEventNames){
+          if (el.style[name] !== undefined) {
+            return transEndEventNames[name]
+          }
+        }
+
+      }())
+
+      return transitionEnd && {
+        end: transitionEnd
+      }
+
+    })()
+
+  })
+
+}(window.jQuery);
+/* =============================================================
+ * bootstrap-collapse.js v2.0.3
+ * http://twitter.github.com/bootstrap/javascript.html#collapse
+ * =============================================================
+ * Copyright 2012 Twitter, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============================================================ */
+
+
+!function ($) {
+
+  "use strict"; // jshint ;_;
+
+
+ /* COLLAPSE PUBLIC CLASS DEFINITION
+  * ================================ */
+
+  var Collapse = function (element, options) {
+    this.$element = $(element)
+    this.options = $.extend({}, $.fn.collapse.defaults, options)
+
+    if (this.options.parent) {
+      this.$parent = $(this.options.parent)
+    }
+
+    this.options.toggle && this.toggle()
+  }
+
+  Collapse.prototype = {
+
+    constructor: Collapse
+
+  , dimension: function () {
+      var hasWidth = this.$element.hasClass('width')
+      return hasWidth ? 'width' : 'height'
+    }
+
+  , show: function () {
+      var dimension
+        , scroll
+        , actives
+        , hasData
+
+      if (this.transitioning) return
+
+      dimension = this.dimension()
+      scroll = $.camelCase(['scroll', dimension].join('-'))
+      actives = this.$parent && this.$parent.find('> .accordion-group > .in')
+
+      if (actives && actives.length) {
+        hasData = actives.data('collapse')
+        if (hasData && hasData.transitioning) return
+        actives.collapse('hide')
+        hasData || actives.data('collapse', null)
+      }
+
+      this.$element[dimension](0)
+      this.transition('addClass', $.Event('show'), 'shown')
+      this.$element[dimension](this.$element[0][scroll])
+    }
+
+  , hide: function () {
+      var dimension
+      if (this.transitioning) return
+      dimension = this.dimension()
+      this.reset(this.$element[dimension]())
+      this.transition('removeClass', $.Event('hide'), 'hidden')
+      this.$element[dimension](0)
+    }
+
+  , reset: function (size) {
+      var dimension = this.dimension()
+
+      this.$element
+        .removeClass('collapse')
+        [dimension](size || 'auto')
+        [0].offsetWidth
+
+      this.$element[size !== null ? 'addClass' : 'removeClass']('collapse')
+
+      return this
+    }
+
+  , transition: function (method, startEvent, completeEvent) {
+      var that = this
+        , complete = function () {
+            if (startEvent.type == 'show') that.reset()
+            that.transitioning = 0
+            that.$element.trigger(completeEvent)
+          }
+
+      this.$element.trigger(startEvent)
+
+      if (startEvent.isDefaultPrevented()) return
+
+      this.transitioning = 1
+
+      this.$element[method]('in')
+
+      $.support.transition && this.$element.hasClass('collapse') ?
+        this.$element.one($.support.transition.end, complete) :
+        complete()
+    }
+
+  , toggle: function () {
+      this[this.$element.hasClass('in') ? 'hide' : 'show']()
+    }
+
+  }
+
+
+ /* COLLAPSIBLE PLUGIN DEFINITION
+  * ============================== */
+
+  $.fn.collapse = function (option) {
+    return this.each(function () {
+      var $this = $(this)
+        , data = $this.data('collapse')
+        , options = typeof option == 'object' && option
+      if (!data) $this.data('collapse', (data = new Collapse(this, options)))
+      if (typeof option == 'string') data[option]()
+    })
+  }
+
+  $.fn.collapse.defaults = {
+    toggle: true
+  }
+
+  $.fn.collapse.Constructor = Collapse
+
+
+ /* COLLAPSIBLE DATA-API
+  * ==================== */
+
+  $(function () {
+    $('body').on('click.collapse.data-api', '[data-toggle=collapse]', function ( e ) {
+      var $this = $(this), href
+        , target = $this.attr('data-target')
+          || e.preventDefault()
+          || (href = $this.attr('href')) && href.replace(/.*(?=#[^\s]+$)/, '') //strip for ie7
+        , option = $(target).data('collapse') ? 'toggle' : $this.data()
+      $(target).collapse(option)
+    })
+  })
+
+}(window.jQuery);
+/* ============================================================
+ * bootstrap-dropdown.js v2.0.3
+ * http://twitter.github.com/bootstrap/javascript.html#dropdowns
+ * ============================================================
+ * Copyright 2012 Twitter, Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * ============================================================ */
+
+
+!function ($) {
+
+  "use strict"; // jshint ;_;
+
+
+ /* DROPDOWN CLASS DEFINITION
+  * ========================= */
+
+  var toggle = '[data-toggle="dropdown"]'
+    , Dropdown = function (element) {
+        var $el = $(element).on('click.dropdown.data-api', this.toggle)
+        $('html').on('click.dropdown.data-api', function () {
+          $el.parent().removeClass('open')
+        })
+      }
+
+  Dropdown.prototype = {
+
+    constructor: Dropdown
+
+  , toggle: function (e) {
+      var $this = $(this)
+        , $parent
+        , selector
+        , isActive
+
+      if ($this.is('.disabled, :disabled')) return
+
+      selector = $this.attr('data-target')
+
+      if (!selector) {
+        selector = $this.attr('href')
+        selector = selector && selector.replace(/.*(?=#[^\s]*$)/, '') //strip for ie7
+      }
+
+      $parent = $(selector)
+      $parent.length || ($parent = $this.parent())
+
+      isActive = $parent.hasClass('open')
+
+      clearMenus()
+
+      if (!isActive) $parent.toggleClass('open')
+
+      return false
+    }
+
+  }
+
+  function clearMenus() {
+    $(toggle).parent().removeClass('open')
+  }
+
+
+  /* DROPDOWN PLUGIN DEFINITION
+   * ========================== */
+
+  $.fn.dropdown = function (option) {
+    return this.each(function () {
+      var $this = $(this)
+        , data = $this.data('dropdown')
+      if (!data) $this.data('dropdown', (data = new Dropdown(this)))
+      if (typeof option == 'string') data[option].call($this)
+    })
+  }
+
+  $.fn.dropdown.Constructor = Dropdown
+
+
+  /* APPLY TO STANDARD DROPDOWN ELEMENTS
+   * =================================== */
+
+  $(function () {
+    $('html').on('click.dropdown.data-api', clearMenus)
+    $('body')
+      .on('click.dropdown', '.dropdown form', function (e) { e.stopPropagation() })
+      .on('click.dropdown.data-api', toggle, Dropdown.prototype.toggle)
+  })
+
+}(window.jQuery);
 
 (function(/*! Stitch !*/) {
   if (!this.require) {
@@ -48,13 +365,13 @@
   }
   return this.require.define;
 }).call(this)({
-  "spine/index": function(exports, require, module) {module.exports = require('./lib/spine');}, "spine/lib/spine": function(exports, require, module) {// Generated by CoffeeScript 1.3.1
+  "spine/index": function(exports, require, module) {module.exports = require('./lib/spine');}, "spine/lib/spine": function(exports, require, module) {// Generated by CoffeeScript 1.3.3
 (function() {
   var $, Controller, Events, Log, Model, Module, Spine, createObject, isArray, isBlank, makeArray, moduleKeywords,
     __slice = [].slice,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; },
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   Events = {
@@ -144,8 +461,6 @@
 
   Module = (function() {
 
-    Module.name = 'Module';
-
     Module.include = function(obj) {
       var key, value, _ref;
       if (!obj) {
@@ -207,8 +522,6 @@
   Model = (function(_super) {
 
     __extends(Model, _super);
-
-    Model.name = 'Model';
 
     Model.extend(Events);
 
@@ -285,7 +598,6 @@
         this.records[record.id] = record;
         this.crecords[record.cid] = record;
       }
-      this.resetIdCounter();
       this.trigger('refresh', this.cloneArray(records));
       return this;
     };
@@ -461,26 +773,6 @@
 
     Model.idCounter = 0;
 
-    Model.resetIdCounter = function() {
-      var ids, lastID, model;
-      ids = ((function() {
-        var _i, _len, _ref, _results;
-        _ref = this.all();
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          model = _ref[_i];
-          _results.push(model.id);
-        }
-        return _results;
-      }).call(this)).sort(function(a, b) {
-        return a > b;
-      });
-      lastID = ids[ids.length - 1];
-      lastID = (lastID != null ? typeof lastID.replace === "function" ? lastID.replace(/^c-/, '') : void 0 : void 0) || lastID;
-      lastID = parseInt(lastID, 10);
-      return this.idCounter = (lastID + 1) || 0;
-    };
-
     Model.uid = function(prefix) {
       if (prefix == null) {
         prefix = '';
@@ -493,7 +785,7 @@
       if (atts) {
         this.load(atts);
       }
-      this.cid || (this.cid = this.constructor.uid('c-'));
+      this.cid = this.constructor.uid('c-');
     }
 
     Model.prototype.isNew = function() {
@@ -712,8 +1004,6 @@
   Controller = (function(_super) {
 
     __extends(Controller, _super);
-
-    Controller.name = 'Controller';
 
     Controller.include(Events);
 
@@ -937,8 +1227,6 @@
 
       __extends(result, _super);
 
-      result.name = 'result';
-
       function result() {
         return result.__super__.constructor.apply(this, arguments);
       }
@@ -967,8 +1255,6 @@
 
       __extends(Instance, _super);
 
-      Instance.name = 'Instance';
-
       function Instance() {
         return Instance.__super__.constructor.apply(this, arguments);
       }
@@ -980,18 +1266,14 @@
     return Instance;
   };
 
-  Module.init = Controller.init = Model.init = function(a1, a2, a3, a4, a5) {
-    return new this(a1, a2, a3, a4, a5);
-  };
-
   Spine.Class = Module;
 
 }).call(this);
-}, "spine/lib/route": function(exports, require, module) {// Generated by CoffeeScript 1.3.1
+}, "spine/lib/route": function(exports, require, module) {// Generated by CoffeeScript 1.3.3
 (function() {
   var $, Spine, escapeRegExp, hashStrip, namedParam, splatParam,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
 
   Spine = this.Spine || require('spine');
@@ -1010,8 +1292,6 @@
     var _ref;
 
     __extends(Route, _super);
-
-    Route.name = 'Route';
 
     Route.extend(Spine.Events);
 
@@ -1037,6 +1317,16 @@
       } else {
         return this.routes.push(new this(path, callback));
       }
+    };
+
+    Route.addMap = function(list) {
+      var key, newArray, value;
+      newArray = [];
+      for (key in list) {
+        value = list[key];
+        newArray.push(new this(key, value));
+      }
+      return this.routes.push(newArray);
     };
 
     Route.setup = function(options) {
@@ -1128,15 +1418,30 @@
     };
 
     Route.matchRoute = function(path, options) {
-      var route, _i, _len, _ref1;
+      var contextRoute, contextualMatches, match, route, _i, _j, _k, _len, _len1, _len2, _ref1, _results;
+      contextualMatches = [];
       _ref1 = this.routes;
       for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
         route = _ref1[_i];
-        if (route.match(path, options)) {
+        if (route instanceof Array) {
+          for (_j = 0, _len1 = route.length; _j < _len1; _j++) {
+            contextRoute = route[_j];
+            if (contextRoute.match(path, options)) {
+              contextualMatches.push(contextRoute);
+              break;
+            }
+          }
+        } else if (route.match(path, options)) {
           this.trigger('change', route, path);
           return route;
         }
       }
+      _results = [];
+      for (_k = 0, _len2 = contextualMatches.length; _k < _len2; _k++) {
+        match = contextualMatches[_k];
+        _results.push(this.trigger('change', match, path));
+      }
+      return _results;
     };
 
     function Route(path, callback) {
@@ -1183,17 +1488,14 @@
   Spine.Route.change = Spine.Route.proxy(Spine.Route.change);
 
   Spine.Controller.include({
-    route: function(path, callback) {
-      return Spine.Route.add(path, this.proxy(callback));
-    },
     routes: function(routes) {
-      var key, value, _results;
-      _results = [];
-      for (key in routes) {
-        value = routes[key];
-        _results.push(this.route(key, value));
+      var callback, path, proxiedRoutes;
+      proxiedRoutes = {};
+      for (path in routes) {
+        callback = routes[path];
+        proxiedRoutes[path] = this.proxy(callback);
       }
-      return _results;
+      return Spine.Route.addMap(proxiedRoutes);
     },
     navigate: function() {
       return Spine.Route.navigate.apply(Spine.Route, arguments);
@@ -1205,11 +1507,11 @@
   }
 
 }).call(this);
-}, "spine/lib/manager": function(exports, require, module) {// Generated by CoffeeScript 1.3.1
+}, "spine/lib/manager": function(exports, require, module) {// Generated by CoffeeScript 1.3.3
 (function() {
   var $, Spine,
     __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
     __slice = [].slice;
 
   Spine = this.Spine || require('spine');
@@ -1219,8 +1521,6 @@
   Spine.Manager = (function(_super) {
 
     __extends(Manager, _super);
-
-    Manager.name = 'Manager';
 
     Manager.include(Spine.Events);
 
@@ -1307,16 +1607,14 @@
 
     __extends(Stack, _super);
 
-    Stack.name = 'Stack';
-
     Stack.prototype.controllers = {};
 
-    Stack.prototype.routes = {};
+    Stack.prototype.map = {};
 
     Stack.prototype.className = 'spine stack';
 
     function Stack() {
-      var key, value, _fn, _ref, _ref1,
+      var key, resolvedRoutes, value, _fn, _ref, _ref1,
         _this = this;
       Stack.__super__.constructor.apply(this, arguments);
       this.manager = new Spine.Manager;
@@ -1328,7 +1626,8 @@
         });
         this.add(this[key]);
       }
-      _ref1 = this.routes;
+      resolvedRoutes = {};
+      _ref1 = this.map;
       _fn = function(key, value) {
         var callback;
         if (typeof value === 'function') {
@@ -1338,12 +1637,13 @@
           var _ref2;
           return (_ref2 = _this[value]).active.apply(_ref2, arguments);
         });
-        return _this.route(key, callback);
+        return resolvedRoutes[key] = callback;
       };
       for (key in _ref1) {
         value = _ref1[key];
         _fn(key, value);
       }
+      this.routes(resolvedRoutes);
       if (this["default"]) {
         this[this["default"]].active();
       }
@@ -1413,7 +1713,7 @@
 
     Main.prototype.map = {
       'a': 'a',
-      'b/:sub': 'b',
+      'b/:child': 'b',
       'c': 'c'
     };
 
@@ -1655,7 +1955,7 @@
   (function() {
     (function() {
     
-      __out.push('<div class="navbar navbar-fixed-top">\n  <div class="navbar-inner">\n    <div class="container">\n      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n      </a>\n\n      <a class="brand" href="#">Bootstrap + Spine</a>\n\n      <div class="nav-collapse collapse">\n        <ul class="nav">\n          <li><a href="#a">Option A</a></li>\n          <li class="dropdown">\n          <a href="#b" class="dropdown-toggle" data-toggle="dropdown">Nested Menu<b class="caret"></b></a>\n          <ul class="dropdown-menu">\n            <li><a href="#b/a">Sub Menu A</a></li>\n            <li><a href="#b/b">Sub Menu B</a></li>\n            <li><a href="#b/c">And something else</a></li>\n          </ul>\n          </li>\n          <li><a href="#c">Another Option</a></li>\n        </ul>\n      </div>\n    </div>\n  </div>\n</div>\n\n');
+      __out.push('<div class="navbar navbar-fixed-top">\n  <div class="navbar-inner">\n    <div class="container">\n      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n        <span class="icon-bar"></span>\n      </a>\n\n      <a class="brand" href="#">Bootstrap + Spine</a>\n\n      <div class="nav-collapse collapse">\n        <ul class="nav">\n          <li class="active"><a href="#a">Option A</a></li>\n          <li class="dropdown">\n          <a href="#b" class="dropdown-toggle" data-toggle="dropdown">Nested Menu<b class="caret"></b></a>\n          <ul class="dropdown-menu">\n            <li><a href="#b/a">Sub Menu A</a></li>\n            <li><a href="#b/b">Sub Menu B</a></li>\n            <li><a href="#b/c">And something else</a></li>\n          </ul>\n          </li>\n          <li><a href="#c">Another Option</a></li>\n        </ul>\n      </div>\n    </div>\n  </div>\n</div>\n\n');
     
     }).call(this);
     

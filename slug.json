@@ -1,6 +1,6 @@
 {
   "css":"./css",
-  "public":".",
+  "public":"./public",
   "paths":["./src"],
   "cssPath":"/assets/css/application.css",
   "jsPath":"/assets/js/application.js",
@@ -9,5 +9,5 @@
     "spine/lib/route",
     "spine/lib/manager"
   ],
-  "libs": []
+  "libs": ["./lib/bootstrap-transition.js","./lib/bootstrap-collapse.js", "./lib/bootstrap-dropdown.js"]
 }

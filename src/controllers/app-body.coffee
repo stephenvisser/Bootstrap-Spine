@@ -7,7 +7,7 @@ ControllerC = require('controllers/c')
 class Main extends Spine.Stack
   map:
     'a': 'a'
-    'b/:sub': 'b'
+    'b/:child': 'b'
     'c': 'c'
 
   default:
